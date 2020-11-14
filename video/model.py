@@ -1,5 +1,6 @@
 from google.cloud import automl
 import os
+import streamlit as st
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = 'key.json'
 
@@ -10,7 +11,9 @@ prediction_client = automl.PredictionServiceClient()
 model_full_id = automl.AutoMlClient.model_path(project_id, "us-central1", model_id)
 
 
-def predict(filepath, prediction_client, model_full_id, threshold="0.1"):
+@st.cache(persist=True, suppress_st_warning=True)
+def predict(filepath):
+    threshold = "0.1"
     with open(filepath, "rb") as content_file:
         content = content_file.read()
 
@@ -24,7 +27,10 @@ def predict(filepath, prediction_client, model_full_id, threshold="0.1"):
         params=params
     )
 
-    return prediction_client.predict(request=request)
+    response = prediction_client.predict(request=request)
+
+    return {**{result.display_name.capitalize(): result.classification.score for result in response.payload},
+             **{'Name': os.path.basename(filepath)}}
 
 
 def predict_frames(path, bar):
@@ -34,9 +40,7 @@ def predict_frames(path, bar):
     i = 0
     for filename in test_files:
         filepath = os.path.join(path, filename)
-        response = predict(filepath, prediction_client, model_full_id)
-        r = {**{result.display_name.capitalize(): result.classification.score for result in response.payload},
-             **{'Name': filename}}
+        r = predict(filepath)
         predictions.append(r)
         i += 1
         bar.progress(i * 100 // len(test_files))
@@ -66,7 +70,7 @@ def process_predictions(predictions):
         o = []
         st = w[k][0]
         for i in range(1, len(w[k])):
-            if w[k][i] == w[k][i - 1] + 1:
+            if w[k][i] == w[k][i - 1] + 2:
                 continue
             else:
                 o.append((st, w[k][i - 1] + 1))
