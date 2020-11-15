@@ -27,8 +27,7 @@ def music_app(uploaded_file):
 
     pr = call_model(output_path)
 
-    placeholder.empty()
-    st.success('Audio analysis is done')
+    placeholder.text('Postprocessing...')
 
     @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
     def call_agg(pr):
@@ -36,6 +35,9 @@ def music_app(uploaded_file):
 
 
     out = call_agg(pr)
+
+    placeholder.empty()
+    st.success('Audio analysis is done')
 
     df = pd.DataFrame(
         [[o[1], o[0]] for o in out],

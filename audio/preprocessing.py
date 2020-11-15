@@ -1,5 +1,5 @@
 from pydub import AudioSegment
-AudioSegment.converter = '/usr/local/bin/ffmpeg'
+AudioSegment.converter = '/usr/bin/ffmpeg'
 # import sys
 # sys.path.append('/Users/andrzej/Downloads/ffmpeg')
 # import ffprobe
