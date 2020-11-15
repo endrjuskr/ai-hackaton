@@ -19,7 +19,7 @@ if uploaded_file is not None:
 
     if uploaded_file.name.lower().strip().endswith("mp4"):
         name = uploaded_file.name.replace(" ", "").replace(".", "_")
-        output_path = f'uploads/{name}.mp4'
+        output_path = 'uploads/' + name + '.mp4'
         if not os.path.exists(output_path):
             preprocessing.upload_temporary(io.BytesIO(uploaded_file.read()), output_path)
 
@@ -30,7 +30,7 @@ if uploaded_file is not None:
 
         fps = preprocessing.get_fps(output_path)
         placeholder.text('Sampling video...')
-        frame_path = f'frames/frames_{name}'
+        frame_path = 'frames/frames_' + name
         if not os.path.exists(frame_path):
             os.makedirs(frame_path, exist_ok=True)
             preprocessing.get_frames(output_path, frame_path, fps, 30, bar_placeholder)

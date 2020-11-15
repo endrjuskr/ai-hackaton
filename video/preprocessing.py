@@ -19,7 +19,7 @@ def get_frames(video_path, output_path, fps, length=None, bar=None):
         if not ret:
             break
         if i % fps == 0:
-            cv2.imwrite(f"{output_path}/{str(i // fps)}.jpg", frame)
+            cv2.imwrite(output_path + "/" + str(i // fps) + ".jpg", frame)
         i += 1
         if length is not None:
             if bar is not None:

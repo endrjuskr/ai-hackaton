@@ -10,22 +10,22 @@ import os
 
 def music_app(uploaded_file):
     name = uploaded_file.name.replace(" ", "")
-    output_path = f'uploads/{name}'
+    output_path = 'uploads/' + name
     if not os.path.exists(output_path):
         preprocessing.upload_temporary(io.BytesIO(uploaded_file.read()), output_path)
 
     placeholder = st.empty()
     placeholder.text('Audio sampling...')
-    if not os.path.exists(f'uploads/new_{name}'):
-        ps.cut(output_path, f'uploads/new_{name}')
-    output_path = f'uploads/new_{name}'
+    if not os.path.exists('uploads/new_' + name):
+        ps.cut(output_path, 'uploads/new_' + name)
+    output_path = 'uploads/new_' + name
     placeholder.text('Magic happens...')
 
     @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
     def call_model(path):
         return md.predict(path)
 
-    pr = call_model(f'{output_path}')
+    pr = call_model(output_path)
 
     placeholder.empty()
     st.success('Audio analysis is done')
@@ -58,7 +58,7 @@ def music_app(uploaded_file):
                 if w in pr2[j].lower():
                     t.append((pr2[j], w2, "#8ef"))
                 else:
-                    t.append(f" {pr2[j]} ")
+                    t.append(" " + pr2[j] + " ")
             annotated_text(*t)
     else:
         pr2 = pr.split(' ')
