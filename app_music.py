@@ -9,20 +9,19 @@ import os
 
 
 def music_app(uploaded_file):
-
-
-    output_path = f'{hash(uploaded_file.name)}.mp3'
+    name = uploaded_file.name.replace(" ", "")
+    output_path = f'uploads/{name}'
     if not os.path.exists(output_path):
         preprocessing.upload_temporary(io.BytesIO(uploaded_file.read()), output_path)
 
     placeholder = st.empty()
     placeholder.text('Audio sampling...')
-    if not os.path.exists(f'new_{output_path}'):
-        ps.cut(output_path, f'new_{output_path}')
-    output_path = f'new_{output_path}'
+    if not os.path.exists(f'uploads/new_{name}'):
+        ps.cut(output_path, f'uploads/new_{name}')
+    output_path = f'uploads/new_{name}'
     placeholder.text('Magic happens...')
 
-    @st.cache(persist=True, suppress_st_warning=True)
+    @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
     def call_model(path):
         return md.predict(path)
 
@@ -31,7 +30,7 @@ def music_app(uploaded_file):
     placeholder.empty()
     st.success('Audio analysis is done')
 
-    @st.cache(persist=True, suppress_st_warning=True)
+    @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
     def call_agg(pr):
         return md.aggregate(pr)
 

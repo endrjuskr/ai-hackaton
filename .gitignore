@@ -27,7 +27,7 @@ share/python-wheels/
 *.egg
 MANIFEST
 .idea
-frames*
+frames/frames_*
 key.json
 *.mp4
 *.mp3

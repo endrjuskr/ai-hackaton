@@ -11,7 +11,7 @@ prediction_client = automl.PredictionServiceClient()
 model_full_id = automl.AutoMlClient.model_path(project_id, "us-central1", model_id)
 
 
-@st.cache(persist=True, suppress_st_warning=True)
+@st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
 def predict(filepath):
     threshold = "0.1"
     with open(filepath, "rb") as content_file:
