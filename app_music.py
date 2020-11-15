@@ -8,7 +8,7 @@ import io
 import os
 
 
-def music_app(uploaded_file):
+def music_app(uploaded_file, language_index):
     name = uploaded_file.name.replace(" ", "")
     output_path = 'uploads/' + name
     if not os.path.exists(output_path):
@@ -22,19 +22,19 @@ def music_app(uploaded_file):
     placeholder.text('Magic happens...')
 
     @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
-    def call_model(path):
-        return md.predict(path)
+    def call_model(path, language_index):
+        return md.predict(path, language_index)
 
-    pr = call_model(output_path)
+    pr = call_model(output_path, language_index)
 
     placeholder.text('Postprocessing...')
 
     @st.cache(persist=True, show_spinner=False, suppress_st_warning=True)
-    def call_agg(pr):
-        return md.aggregate(pr)
+    def call_agg(pr, language_index):
+        return md.aggregate(pr, language_index)
 
 
-    out = call_agg(pr)
+    out = call_agg(pr, language_index)
 
     placeholder.empty()
     st.success('Audio analysis is done')
@@ -57,7 +57,7 @@ def music_app(uploaded_file):
             for j in range(i, i + 30):
                 if j >= len(pr2):
                     break
-                if w in pr2[j].lower():
+                if w.lower() in pr2[j].lower():
                     t.append((pr2[j], w2, "#8ef"))
                 else:
                     t.append(" " + pr2[j] + " ")

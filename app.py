@@ -11,7 +11,11 @@ st.title("AI hackathon by Hobbmate")
 
 st.subheader('Video & Audio analyzer')
 
-st.info('For performance and cost reasons analysis is limited to first 30 sec. Audio analyzer accepts only Polish sound.')
+st.info('For performance and cost reasons analysis is limited to first 30 sec.')
+
+st.markdown("[Sample files to explore](https://drive.google.com/drive/folders/1p5P6angoGRe0eGdx33dbcxHFdUvh9dK_?usp=sharing)")
+
+language_index = st.selectbox("Select spoken language in file", ('Polish', 'English'))
 
 uploaded_file = st.file_uploader("Choose a file...", type=["mp4", 'mp3'])
 
@@ -64,4 +68,4 @@ if uploaded_file is not None:
             video_placeholder = st.empty()
             video_placeholder.video(video_bytes, start_time=df['from'][row_index])
     else:
-        music_app(uploaded_file)
+        music_app(uploaded_file, language_index)

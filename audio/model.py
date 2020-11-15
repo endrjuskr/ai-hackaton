@@ -4,8 +4,10 @@ import io
 import spacy
 
 
-def predict(path):
+def predict(path, language_index):
     client = speech_v1p1beta1.SpeechClient()
+
+    lang = "pl-PL" if language_index == "Polish" else "en-US"
 
     with io.open(path, "rb") as audio_file:
         content = audio_file.read()
@@ -14,7 +16,7 @@ def predict(path):
     config = speech_v1p1beta1.RecognitionConfig(
         encoding=speech_v1p1beta1.RecognitionConfig.AudioEncoding.MP3,
         sample_rate_hertz=16000,
-        language_code="pl-PL",
+        language_code=lang,
     )
 
     operation = client.long_running_recognize(
@@ -23,8 +25,7 @@ def predict(path):
 
     operation = client.long_running_recognize(config=config, audio=audio)
 
-    print("Waiting for operation to complete...")
-    response = operation.result(timeout=60)
+    response = operation.result(timeout=90)
 
     # Each result is for a consecutive portion of the audio. Iterate through
     # them to get the transcripts for the entire audio file.
@@ -32,9 +33,13 @@ def predict(path):
     return text
 
 
-def aggregate(text):
+def aggregate(text, language_index):
 
-    nlp = spacy.load("pl_core_news_sm")
+    nlp = None
+    if language_index == "Polish":
+        nlp = spacy.load("pl_core_news_sm")
+    else:
+        nlp = spacy.load("en_core_web_sm")
     doc = nlp(text.lower())
 
     labels = ["Amusement park", "Animals", "Bench", "Building", "Castle", "Cave", "Church", "City", "Cross",
@@ -51,13 +56,23 @@ def aggregate(text):
 
     d = []
 
-    for i, e in enumerate(pl_labels):
-        c = 0
-        for token in doc:
-            if e in token.text:
-                c += 1
-        if c > 0:
-            d.append((c, labels[i], e))
+    if language_index == "Polish":
+        for i, e in enumerate(pl_labels):
+            c = 0
+            for token in doc:
+                if e in token.text:
+                    c += 1
+            if c > 0:
+                d.append((c, labels[i], e))
+
+    else:
+        for i, e in enumerate(labels):
+            c = 0
+            for token in doc:
+                if e.lower() in token.text:
+                    c += 1
+            if c > 0:
+                d.append((c, labels[i], e))
 
     d = sorted(d)
 
