@@ -70,7 +70,7 @@ def process_predictions(predictions):
         o = []
         st = w[k][0]
         for i in range(1, len(w[k])):
-            if w[k][i] == w[k][i - 1] + 2:
+            if w[k][i] <= w[k][i - 1] + 2:
                 continue
             else:
                 o.append((st, w[k][i - 1] + 1))

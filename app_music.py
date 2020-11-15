@@ -10,11 +10,16 @@ import os
 
 def music_app(uploaded_file):
 
+
     output_path = f'{hash(uploaded_file.name)}.mp3'
     if not os.path.exists(output_path):
         preprocessing.upload_temporary(io.BytesIO(uploaded_file.read()), output_path)
 
     placeholder = st.empty()
+    placeholder.text('Audio sampling...')
+    if not os.path.exists(f'new_{output_path}'):
+        ps.cut(output_path, f'new_{output_path}')
+    output_path = f'new_{output_path}'
     placeholder.text('Magic happens...')
 
     @st.cache(persist=True, suppress_st_warning=True)

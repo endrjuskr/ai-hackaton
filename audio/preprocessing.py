@@ -1,4 +1,5 @@
 from pydub import AudioSegment
+AudioSegment.converter = '/usr/local/bin/ffmpeg'
 # import sys
 # sys.path.append('/Users/andrzej/Downloads/ffmpeg')
 # import ffprobe
@@ -9,7 +10,7 @@ def cut(path, new_path):
     startSec = 0
 
     endMin = 0
-    endSec = 50
+    endSec = 30
 
     # Time to miliseconds
     startTime = startMin * 60 * 1000 + startSec * 1000
